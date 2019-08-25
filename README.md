@@ -2,6 +2,7 @@
 
 This repo contains my dotfiles for:
 * `bash`
+* `dunst`
 * `herbstluftwm`
 * `nvim`
 * `st`
