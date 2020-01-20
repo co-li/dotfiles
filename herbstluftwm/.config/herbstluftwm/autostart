@@ -22,12 +22,14 @@ hc keybind $Mod-Shift-q quit
 hc keybind $Mod-Shift-r reload
 hc keybind $Mod-Shift-c close
 hc keybind $Mod-q spawn slock
-hc keybind $Mod-Control-q spawn systemctl hibernate
+hc keybind $Mod-Control-q spawn systemctl suspend
 hc keybind $Mod-Return spawn st-user
-hc keybind $Mod-d spawn j4-dmenu-desktop --dmenu="dmenu -i -l 5" --term="st-user"
+hc keybind $Mod-d spawn j4-dmenu-desktop --dmenu="dmenu -i -l 5 -nb '#1b2b34' -nf '#cdd3de' -sb '#6699cc'" --term="st-user"
 
 hc keybind XF86MonBrightnessUp spawn brightnessctl s 5%+
 hc keybind XF86MonBrightnessDown spawn brightnessctl s 5%-
+hc keybind $Mod-b spawn brightnessctl s 5%+
+hc keybind $Mod-v spawn brightnessctl s 5%-
 
 hc keybind XF86AudioRaiseVolume spawn amixer -q sset Master 5%+
 hc keybind XF86AudioLowerVolume spawn amixer -q sset Master 5%-
@@ -41,6 +43,10 @@ hc keybind $Mod-XF86AudioPlay spawn st -e ncmpcpp
 hc keybind XF86Calculator spawn st -e python3
 hc keybind $Mod-XF86Calculator spawn st -e irb
 hc keybind $Mod-Shift-XF86Calculator spawn st -e swift
+
+hc keybind Print spawn $HOME/.scripts/screenshot.sh
+hc keybind Ctrl+Print spawn $HOME/.scripts/screenshot_select.sh
+hc keybind $Mod+Print spawn $HOME/.scripts/screenshot_window.sh
 
 # basic movement
 # focusing clients
