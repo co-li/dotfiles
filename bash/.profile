@@ -1,2 +1,4 @@
+# .profile
 
-export PATH="$HOME/.cargo/bin:$PATH"
+export GOPATH='/home/kingofinfo/.go'
+export PATH="$HOME/.cargo/bin:$GOPATH/bin:$PATH"

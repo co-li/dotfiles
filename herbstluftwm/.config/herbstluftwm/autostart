@@ -9,6 +9,9 @@ hc() {
 hc emit_hook reload
 
 feh --bg-scale /usr/share/backgrounds/f26/default/standard/f26.png
+setxkbmap -option compose:ralt
+xset dpms 600 600 600
+#xautolock -time 30 -locker "systemctl suspend" -detectsleep
 
 # remove all existing keybindings
 hc keyunbind --all
@@ -18,31 +21,37 @@ hc keyunbind --all
 #Mod=Mod1    # Use alt as the main modifier
 Mod=Mod4   # Use the super key as the main modifier
 
+TERMINAL=alacritty
+
 hc keybind $Mod-Shift-q quit
 hc keybind $Mod-Shift-r reload
 hc keybind $Mod-Shift-c close
-hc keybind $Mod-q spawn slock
+hc keybind $Mod-q spawn slock mpc -q pause
 hc keybind $Mod-Control-q spawn systemctl suspend
-hc keybind $Mod-Return spawn st-user
-hc keybind $Mod-d spawn j4-dmenu-desktop --dmenu="dmenu -i -l 5 -nb '#1b2b34' -nf '#cdd3de' -sb '#6699cc'" --term="st-user"
+hc keybind $Mod-Return spawn $TERMINAL
+hc keybind $Mod-d spawn rofi -modi drun,window,ssh -show drun
 
 hc keybind XF86MonBrightnessUp spawn brightnessctl s 5%+
 hc keybind XF86MonBrightnessDown spawn brightnessctl s 5%-
-hc keybind $Mod-b spawn brightnessctl s 5%+
-hc keybind $Mod-v spawn brightnessctl s 5%-
+hc keybind Ctrl-Up spawn brightnessctl s 5%+
+hc keybind Ctrl-Down spawn brightnessctl s 5%-
 
-hc keybind XF86AudioRaiseVolume spawn amixer -q sset Master 5%+
-hc keybind XF86AudioLowerVolume spawn amixer -q sset Master 5%-
-hc keybind XF86AudioMute spawn amixer -q sset Master toggle
+hc keybind XF86AudioRaiseVolume spawn pactl set-sink-volume @DEFAULT_SINK@ +5%
+hc keybind XF86AudioLowerVolume spawn pactl set-sink-volume @DEFAULT_SINK@ -5%
+hc keybind XF86AudioMute spawn pactl set-sink-mute @DEFAULT_SINK@ toggle
+#hc keybind XF86AudioRaiseVolume spawn amixer -q sset Master 5%+
+#hc keybind XF86AudioLowerVolume spawn amixer -q sset Master 5%-
+#hc keybind XF86AudioMute spawn amixer -q sset Master toggle
 
-hc keybind XF86AudioPrev spawn mpc -q prev
-hc keybind XF86AudioNext spawn mpc -q next
-hc keybind XF86AudioPlay spawn mpc -q toggle
-hc keybind $Mod-XF86AudioPlay spawn st -e ncmpcpp
+hc keybind XF86AudioPrev spawn playerctl --player=playerctld previous
+hc keybind XF86AudioNext spawn playerctl --player=playerctld next
+hc keybind XF86AudioPlay spawn playerctl --player=playerctld play-pause
+hc keybind $Mod-XF86AudioPlay spawn $TERMINAL -e ncmpcpp
 
-hc keybind XF86Calculator spawn st -e python3
-hc keybind $Mod-XF86Calculator spawn st -e irb
-hc keybind $Mod-Shift-XF86Calculator spawn st -e swift
+hc keybind XF86Calculator spawn $TERMINAL -e python3
+hc keybind $Mod-XF86Calculator spawn $TERMINAL -e irb
+hc keybind $Mod-Shift-XF86Calculator spawn $TERMINAL -e swift
+hc keybind $Mod-Ctrl-XF86Calculator spawn $TERMINAL -e julia
 
 hc keybind Print spawn $HOME/.scripts/screenshot.sh
 hc keybind Ctrl+Print spawn $HOME/.scripts/screenshot_select.sh
@@ -171,6 +180,24 @@ hc rule windowtype~'_NET_WM_WINDOW_TYPE_(NOTIFICATION|DOCK|DESKTOP)' manage=off
 
 # make IntelliJ not start fullscreen
 hc rule title='Welcome to IntelliJ IDEA' pseudotile=on
+
+# update fonts
+xset +fp /home/kingofinfo/.local/share/fonts
+xset fp rehash
+
+# add an external panel
+{
+    pids=( )
+    # reserve some space for the panel on monitor 0
+    hc pad 0 25
+    # start the panel itself and remember its pid
+    polybar bar1 &
+    pids+=( $! )
+    # wait until the panels should be stopped
+    herbstclient -w '(quit_panel|reload)'
+    # stopp all started panels
+    kill ${pids[@]}
+} &
 
 # unlock, just to be sure
 hc unlock
